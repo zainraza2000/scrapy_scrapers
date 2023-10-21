@@ -10,7 +10,6 @@ class LeaderboardScraper(scrapy.Spider):
     name = 'leaderboard_scraper'
     start_urls = [
         'https://gflstats.info/sports/fball/2022-23b/players?sort=pyg&view=&pos=qb&r=0']
-    final_data = []
 
     def click_element(self, selector):
         print(selector)
@@ -41,16 +40,11 @@ class LeaderboardScraper(scrapy.Spider):
         header_selectors = response.css('thead').css('th')
         table_headers = self.get_table_headers(header_selectors)
         row_selectors = response.css('tbody').css('tr')
-        self.final_data.append(
-            {'stat_origin': origin_name, 'stat_type': type_name, 'table': []})
+        table = []
         for row_selector in row_selectors:
-            self.final_data[-1]['table'].append(
-                self.get_row_object(row_selector, table_headers))
-        item = LeaderBoardItem()
-        item['stat_origin'] = self.final_data[-1]['stat_origin']
-        item['stat_type'] = self.final_data[-1]['stat_type']
-        item['table'] = self.final_data[-1]['table']
-        yield item
+            table.append({"stat_type": type_name, **
+                          self.get_row_object(row_selector, table_headers)})
+        yield {"table": table}
 
     def get_table_headers(self, header_selectors):
         # getting column names of the table
@@ -88,15 +82,10 @@ class LeaderboardScraper(scrapy.Spider):
         else:
             return text
 
-    def create_json_file(self):
+    def create_json_file(self, data):
         current_datetime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         filename = f'leaderboard_data_{current_datetime}.json'
         downloads_dir = os.path.expanduser("~\\Downloads")
         filepath = os.path.join(downloads_dir, filename)
         with open(filepath, 'w', encoding='utf-8') as json_file:
-            json.dump(self.final_data, json_file, ensure_ascii=False, indent=4)
-
-    def closed(self, reason):
-        # called when spider closes
-        if reason == 'finished':
-            self.create_json_file()
+            json.dump(data, json_file, ensure_ascii=False, indent=4)
