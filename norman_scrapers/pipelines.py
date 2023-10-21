@@ -10,4 +10,5 @@ from itemadapter import ItemAdapter
 
 class NormanScrapersPipeline:
     def process_item(self, item, spider):
+        print('IN THE PIPELINE')
         return item

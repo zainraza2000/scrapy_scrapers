@@ -3,6 +3,7 @@ import re
 import json
 from datetime import datetime
 import os
+from norman_scrapers.items import LeaderBoardItem
 
 
 class LeaderboardScraper(scrapy.Spider):
@@ -22,16 +23,16 @@ class LeaderboardScraper(scrapy.Spider):
         for stat_origin_sel in stat_origins_sel:
             origin_name = stat_origin_sel.css('a::text').extract()[0]
             origin_ref = stat_origin_sel.css('a::attr(href)').extract()[0]
-            yield response.follow(origin_ref, self.parse_secondary, meta={'origin_name': origin_name})
+            yield response.follow(origin_ref, self.iterate_stat_types, meta={'origin_name': origin_name})
 
-    def parse_secondary(self, response):
+    def iterate_stat_types(self, response):
         stat_types_sel = response.xpath('//ul[@class="clearfix"]')[1].css('li')
         for stat_type_sel in stat_types_sel:
             type_name = stat_type_sel.css('a::text').extract()[0]
             type_ref = stat_type_sel.css('a::attr(href)').extract()[0]
-            yield response.follow(type_ref, self.extract_data, meta={'origin_name': response.meta['origin_name'], 'type_name': type_name})
+            yield response.follow(type_ref, self.extract_table_data, meta={'origin_name': response.meta['origin_name'], 'type_name': type_name})
 
-    def extract_data(self, response):
+    def extract_table_data(self, response):
         origin_name = response.meta['origin_name']
         type_name = response.meta['type_name']
         header_selectors = response.css('thead').css('th')
@@ -42,6 +43,11 @@ class LeaderboardScraper(scrapy.Spider):
         for row_selector in row_selectors:
             self.final_data[-1]['table'].append(
                 self.get_row_object(row_selector, table_headers))
+        item = LeaderBoardItem()
+        item['stat_origin'] = self.final_data[-1]['stat_origin']
+        item['stat_type'] = self.final_data[-1]['stat_type']
+        item['table'] = self.final_data[-1]['table']
+        yield item
 
     def get_table_headers(self, header_selectors):
         headers = []
@@ -76,10 +82,8 @@ class LeaderboardScraper(scrapy.Spider):
     def create_json_file(self):
         current_datetime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         filename = f'leaderboard_data_{current_datetime}.json'
-        results_dir = os.path.join(os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__))), 'results')
-        os.makedirs(results_dir, exist_ok=True)
-        filepath = os.path.join(results_dir, filename)
+        downloads_dir = os.path.expanduser("~\\Downloads")
+        filepath = os.path.join(downloads_dir, filename)
         with open(filepath, 'w', encoding='utf-8') as json_file:
             json.dump(self.final_data, json_file, ensure_ascii=False, indent=4)
 

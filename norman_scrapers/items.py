@@ -6,7 +6,8 @@
 import scrapy
 
 
-class NormanScrapersItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
+class LeaderBoardItem(scrapy.Item):
+    stat_origin = scrapy.Field()
+    stat_type = scrapy.Field()
+    table = scrapy.Field()
     pass
