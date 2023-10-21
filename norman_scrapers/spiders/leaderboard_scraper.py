@@ -16,6 +16,7 @@ class LeaderboardScraper(scrapy.Spider):
         print(selector)
 
     def parse(self, response):
+        # initial function iterating through the stat origins(Overall & Conference)
         stat_origins_sel = response.xpath(
             '//ul[@class="clearfix"]')[0].css('li')
         origins = []
@@ -26,6 +27,7 @@ class LeaderboardScraper(scrapy.Spider):
             yield response.follow(origin_ref, self.iterate_stat_types, meta={'origin_name': origin_name})
 
     def iterate_stat_types(self, response):
+        # iterating through href of each stat type for each stat origin
         stat_types_sel = response.xpath('//ul[@class="clearfix"]')[1].css('li')
         for stat_type_sel in stat_types_sel:
             type_name = stat_type_sel.css('a::text').extract()[0]
@@ -33,6 +35,7 @@ class LeaderboardScraper(scrapy.Spider):
             yield response.follow(type_ref, self.extract_table_data, meta={'origin_name': response.meta['origin_name'], 'type_name': type_name})
 
     def extract_table_data(self, response):
+        # getting the table data for each combination of stat origin and stat type (e.g Overall Passing)
         origin_name = response.meta['origin_name']
         type_name = response.meta['type_name']
         header_selectors = response.css('thead').css('th')
@@ -50,6 +53,7 @@ class LeaderboardScraper(scrapy.Spider):
         yield item
 
     def get_table_headers(self, header_selectors):
+        # getting column names of the table
         headers = []
         for header_selector in header_selectors:
             header_text = header_selector.css('a::text').get()
@@ -61,6 +65,7 @@ class LeaderboardScraper(scrapy.Spider):
         return headers
 
     def get_row_object(self, row_selector, table_headers):
+        # getting an object consisting of data in a single row
         data_selectors = row_selector.css('td')
         if len(table_headers) != len(data_selectors.getall()):
             raise ValueError(
@@ -76,8 +81,12 @@ class LeaderboardScraper(scrapy.Spider):
         return result
 
     def get_cleaned_text(self, text):
-        cleaned_string = re.sub(r'\s+', ' ', text.strip())
-        return cleaned_string
+        # cleaning the data
+        if text:
+            cleaned_string = re.sub(r'\s+', ' ', text.strip())
+            return cleaned_string
+        else:
+            return text
 
     def create_json_file(self):
         current_datetime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -88,5 +97,6 @@ class LeaderboardScraper(scrapy.Spider):
             json.dump(self.final_data, json_file, ensure_ascii=False, indent=4)
 
     def closed(self, reason):
+        # called when spider closes
         if reason == 'finished':
             self.create_json_file()
