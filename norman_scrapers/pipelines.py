@@ -9,6 +9,7 @@ from itemadapter import ItemAdapter
 import os
 from supabase import create_client, Client
 import datetime
+from constants import Constants
 
 
 class NormanScrapersPipeline:
@@ -19,8 +20,22 @@ class NormanScrapersPipeline:
         pass
 
     def process_item(self, item, spider):
+        if item['pipeline'] == Constants.leaderboard:
+            return self.leaderboard_pipeline(item)
+        elif item['pipeline'] == Constants.schedule:
+            return self.schedule_pipeline(item)
+        elif item['pipeline'] == Constants.statistics:
+            return self.statistics_pipeline(item)
+
+    def schedule_pipeline(self, item):
+        print(item)
+
+    def statistics_pipeline(self, item):
+        print(item)
+
+    def leaderboard_pipeline(self, item):
         bulk_insert = []
-        for table_rows in item['table']:
+        for table_rows in item['data']:
             bulk_insert.extend(self.get_objects(table_rows))
         self.insert_into_table(bulk_insert, 'PlayerStat')
         return item

@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 import os
 from norman_scrapers.items import LeaderBoardItem
+from constants import Constants
 
 
 class LeaderboardScraper(scrapy.Spider):
@@ -44,7 +45,7 @@ class LeaderboardScraper(scrapy.Spider):
         for row_selector in row_selectors:
             table.append({"stat_type": type_name, **
                           self.get_row_object(row_selector, table_headers)})
-        yield {"table": table}
+        yield {"data": table, "pipeline": Constants.leaderboard}
 
     def get_table_headers(self, header_selectors):
         # getting column names of the table
