@@ -9,7 +9,8 @@ from itemadapter import ItemAdapter
 import os
 from supabase import create_client, Client
 import datetime
-from constants import Constants
+from norman_scrapers.constants import Constants
+from norman_scrapers.getters import Getter
 
 
 class NormanScrapersPipeline:

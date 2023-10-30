@@ -4,16 +4,20 @@ import json
 from datetime import datetime
 import os
 from norman_scrapers.items import LeaderBoardItem
-from constants import Constants
+from enum import Enum
+from norman_scrapers.constants import Constants
+
+
+class Constants(Enum):
+    leaderboard = 'leaderboard'
+    schedule = 'schedule'
+    statistics = 'statistics'
 
 
 class LeaderboardScraper(scrapy.Spider):
     name = 'leaderboard_scraper'
     start_urls = [
         'https://gflstats.info/sports/fball/2022-23b/players?sort=pyg&view=&pos=qb&r=0']
-
-    def click_element(self, selector):
-        print(selector)
 
     def parse(self, response):
         # initial function iterating through the stat origins(Overall & Conference)
