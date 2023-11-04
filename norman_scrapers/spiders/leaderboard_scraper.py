@@ -5,13 +5,7 @@ from datetime import datetime
 import os
 from norman_scrapers.items import LeaderBoardItem
 from enum import Enum
-from norman_scrapers.constants import Constants
-
-
-class Constants(Enum):
-    leaderboard = 'leaderboard'
-    schedule = 'schedule'
-    statistics = 'statistics'
+from norman_scrapers.constants import Pipeline
 
 
 class LeaderboardScraper(scrapy.Spider):
@@ -49,7 +43,7 @@ class LeaderboardScraper(scrapy.Spider):
         for row_selector in row_selectors:
             table.append({"stat_type": type_name, **
                           self.get_row_object(row_selector, table_headers)})
-        yield {"data": table, "pipeline": Constants.leaderboard}
+        yield {"data": table, "pipeline": Pipeline.leaderboard.value}
 
     def get_table_headers(self, header_selectors):
         # getting column names of the table
