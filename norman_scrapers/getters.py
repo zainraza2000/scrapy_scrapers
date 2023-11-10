@@ -37,3 +37,8 @@ class Getter:
         data, count = self.supabase.table(Table.Game.value).select(
             '*').eq('is_scraped', False).eq('box_score', '-').execute()
         return data[1]
+
+    def get_unscraped_box_scores(self):
+        data, count = self.supabase.table(Table.Game.value).select(
+            'id,box_score').eq('is_scraped', False).neq('box_score', '-').execute()
+        return data[1]

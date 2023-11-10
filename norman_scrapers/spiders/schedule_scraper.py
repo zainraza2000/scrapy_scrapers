@@ -74,5 +74,3 @@ class ScheduleScraper(scrapy.Spider):
         if box_score and box_score != '-':
             box_score = self.base_url + box_score
         return {'away_team': away_team, 'away_score': away_score, 'home_team': home_team, 'home_score': home_score, 'status': status, 'box_score': box_score, 'date': f'{month},{date}'}
-
-# .css("a::attr(href)").get()

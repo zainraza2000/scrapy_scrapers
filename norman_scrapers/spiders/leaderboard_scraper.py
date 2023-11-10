@@ -14,15 +14,18 @@ class LeaderboardScraper(scrapy.Spider):
         'https://gflstats.info/sports/fball/2022-23b/players?sort=pyg&view=&pos=qb&r=0']
 
     def parse(self, response):
-        # initial function iterating through the stat origins(Overall & Conference)
-        stat_origins_sel = response.xpath(
-            '//ul[@class="clearfix"]')[0].css('li')
-        origins = []
-        types = []
-        for stat_origin_sel in stat_origins_sel:
-            origin_name = stat_origin_sel.css('a::text').extract()[0]
-            origin_ref = stat_origin_sel.css('a::attr(href)').extract()[0]
-            yield response.follow(origin_ref, self.iterate_stat_types, meta={'origin_name': origin_name})
+        try:
+            # initial function iterating through the stat origins(Overall & Conference)
+            stat_origins_sel = response.xpath(
+                '//ul[@class="clearfix"]')[0].css('li')
+            origins = []
+            types = []
+            for stat_origin_sel in stat_origins_sel:
+                origin_name = stat_origin_sel.css('a::text').extract()[0]
+                origin_ref = stat_origin_sel.css('a::attr(href)').extract()[0]
+                yield response.follow(origin_ref, self.iterate_stat_types, meta={'origin_name': origin_name})
+        except:
+            return
 
     def iterate_stat_types(self, response):
         # iterating through href of each stat type for each stat origin

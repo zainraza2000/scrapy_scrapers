@@ -32,3 +32,9 @@ class Mutator:
 
     def update_box_score(self, game_id, box_score):
         self.update_by_id({'box_score': box_score}, game_id, Table.Game.value)
+
+    def create_scoring(self, scoring):
+        self.create(scoring, table_name=Table.Scoring.value)
+
+    def create_statistics(self, statistics):
+        self.create(statistics, table_name=Table.Statistic.value)
