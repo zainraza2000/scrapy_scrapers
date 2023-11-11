@@ -13,6 +13,10 @@ class Table(Enum):
     Team = 'Team'
     Scoring = 'Scoring'
     Statistic = 'Statistic'
+    ScoringSummary = 'ScoringSummary'
+    DriveSummary = 'DriveSummary'
+    PlayByPlay = 'PlayByPlay'
+    Starters = 'Starters'
 
 
 class StatType(Enum):

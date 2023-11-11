@@ -1,19 +1,15 @@
 import scrapy
-from datetime import datetime
-from datetime import datetime, timedelta
 from norman_scrapers.constants import Pipeline, StatType
-from norman_scrapers.getters import Getter
-import sys
 
 
-class StaisticsScraper(scrapy.Spider):
+class PrimaryStaisticsScraper(scrapy.Spider):
     name = 'primary_statistics_scraper'
     start_urls = [
         'https://gflstats.info/sports/fball/2022-23b/schedule']
     base_url = "https://gflstats.info"
 
     def __init__(self, url, game_id, *args, **kwargs):
-        super(StaisticsScraper, self).__init__(*args, **kwargs)
+        super(PrimaryStaisticsScraper, self).__init__(*args, **kwargs)
         self.stats_url = url
         self.game_id = game_id
 
