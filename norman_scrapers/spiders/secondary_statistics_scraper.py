@@ -82,11 +82,27 @@ class SecondaryStaisticsScraper(scrapy.Spider):
                             'scoring_summary': scoring_summary, 'away_score': away_score, 'home_score': home_score, 'game_id': self.game_id})
             return data
         except Exception as e:
-            print(f'except-------{e}')
+            print(f'exception-------{e}')
             return None
 
     def get_drive_summary(self, response):
-        print(response)
+        try:
+            data = []
+            table_rows = response.xpath("//table")[2].css("tbody").css("tr")
+            for table_row in table_rows:
+                team = table_row.xpath(".//td[@class='drive-team-name']/text()").get().strip()
+                quarter = table_row.xpath(".//td/text()")[1].get().strip()
+                start = table_row.xpath(".//td/text()")[2].get().strip()
+                poss = table_row.xpath(".//td/text()")[3].get().strip()
+                began = table_row.xpath(".//td/text()")[4].get().strip()
+                plays = table_row.xpath(".//td/text()")[5].get().strip()
+                yards = table_row.xpath(".//td/text()")[6].get().strip()
+                result = table_row.xpath(".//td/text()")[7].get().strip()
+                data.append({"game_id": self.game_id, "team": team, "quarter": quarter, "start": start, "poss": poss, "began": began, "plays": plays,"yards": yards, "result": result})
+            return data
+        except Exception as e:
+            print(f'exception-------{e}')
+            return None
 
     def get_starters(self, response):
         print(response)
