@@ -24,9 +24,12 @@ class StatisticsPipeline:
     def process_secondary_data(self,item):
         table = item['table']
         data = item['data']
-        transformed_data = []
-        for _data in data:
-            transformed = {**_data,"team_id": self.team_dict[_data.get('team').lower()]}
-            transformed.pop("team",None)
-            transformed_data.append(transformed)
-        self.mutator.create(data=transformed_data,table_name=table)
+        if "team" in data[0]:
+            transformed_data = []
+            for _data in data:
+                transformed = {**_data,"team_id": self.team_dict[_data.get('team').lower()]}
+                transformed.pop("team",None)
+                transformed_data.append(transformed)
+            self.mutator.create(data=transformed_data,table_name=table)
+        else:
+            self.mutator.create(data=data,table_name=table)
