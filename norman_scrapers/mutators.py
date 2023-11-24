@@ -38,3 +38,6 @@ class Mutator:
 
     def create_statistics(self, statistics):
         self.create(statistics, table_name=Table.Statistic.value)
+
+    def mark_scraped(self,id):
+        self.update_by_id(data={"is_scraped": True},id=id,table_name=Table.Game.value)

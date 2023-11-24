@@ -22,3 +22,9 @@ class Table(Enum):
 class StatType(Enum):
     primary = 'primary'
     secondary = 'secondary'
+
+class Spiders(Enum):
+    Leaderboard = "leaderboard_scraper"
+    Schedule = "schedule_scraper"
+    PrimaryStats = "primary_statistics_scraper"
+    SecondaryStats = "secondary_statistics_scraper"
