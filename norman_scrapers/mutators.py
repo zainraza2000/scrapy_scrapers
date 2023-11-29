@@ -17,9 +17,13 @@ class Mutator:
     def create(self, data, table_name):
         self.supabase.table(table_name).insert(
             data).execute()
+    
 
     def update_by_id(self, data, id, table_name):
         self.supabase.table(table_name).update(data).eq('id', id).execute()
+    
+    def delete_player_stat(self):
+        self.supabase.table(Table.PlayerStat.value).delete().gte('id', 1).execute()
 
     def create_player_stat(self, data):
         self.create(data, Table.PlayerStat.value)

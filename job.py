@@ -2,6 +2,8 @@ import subprocess
 from norman_scrapers.constants import Spiders
 from norman_scrapers.getters import Getter
 from norman_scrapers.mutators import Mutator
+import schedule
+import time
 
 class Job:
     def __init__(self) -> None:
@@ -16,7 +18,7 @@ class Job:
         command = f"scrapy crawl {Spiders.Schedule.value}"
         subprocess.run(command,shell=True)
 
-    def primary_statistics_spider_job(self):
+    def game_statistics_spider_job(self):
         getter = Getter()
         unscraped_box_scores = getter.get_unscraped_box_scores()
         for unscraped_box_score in unscraped_box_scores:
@@ -30,3 +32,16 @@ class Job:
                 self.mutator.mark_scraped(id=id)
             except:
                 continue
+    def schedule_tasks(self):
+        schedule.every().minute.do(self.game_statistics_spider_job)
+        schedule.every().monday.at("08:00").do(self.leaderboard_spider_job)
+        schedule.every().monday.at("08:00").do(self.schedule_spider_job)
+        schedule.every().day.at("09:00").do(self.game_statistics_spider_job)
+
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
+if __name__ == "__main__":
+    job = Job()
+    job.schedule_tasks()

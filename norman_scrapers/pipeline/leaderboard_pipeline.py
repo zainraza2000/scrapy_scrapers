@@ -12,6 +12,7 @@ class LeaderboardPipeline:
         bulk_insert = []
         for table_rows in item['data']:
             bulk_insert.extend(self.get_objects(table_rows))
+        self.mutator.delete_player_stat()
         self.mutator.create_player_stat(bulk_insert)
         return item
 
