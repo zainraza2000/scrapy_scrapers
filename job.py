@@ -33,7 +33,6 @@ class Job:
             except:
                 continue
     def schedule_tasks(self):
-        schedule.every().minute.do(self.game_statistics_spider_job)
         schedule.every().monday.at("08:00").do(self.leaderboard_spider_job)
         schedule.every().monday.at("08:00").do(self.schedule_spider_job)
         schedule.every().day.at("09:00").do(self.game_statistics_spider_job)
