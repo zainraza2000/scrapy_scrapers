@@ -25,7 +25,7 @@ class NormanScrapersPipeline:
             name = team['name'].lower()
             id = team['id']
             self.team_dict[name] = id
-        self.leaderboard_pipeline = LeaderboardPipeline()
+        self.leaderboard_pipeline = LeaderboardPipeline(self.team_dict)
         self.schedule_pipeline = SchedulePipeline(self.team_dict)
         self.statistics_pipeline = StatisticsPipeline(self.team_dict)
         pass

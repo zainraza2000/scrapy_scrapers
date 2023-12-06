@@ -2,6 +2,7 @@ import scrapy
 from datetime import datetime
 from datetime import datetime, timedelta
 from norman_scrapers.constants import Pipeline
+from norman_scrapers.utils import string_to_timestamp
 import sys
 
 
@@ -73,4 +74,4 @@ class ScheduleScraper(scrapy.Spider):
                 break
         if box_score and box_score != '-':
             box_score = self.base_url + box_score
-        return {'away_team': away_team, 'away_score': away_score, 'home_team': home_team, 'home_score': home_score, 'status': status, 'box_score': box_score, 'date': f'{month},{date}'}
+        return {'away_team': away_team, 'away_score': away_score, 'home_team': home_team, 'home_score': home_score, 'status': status, 'box_score': box_score, 'date': string_to_timestamp(f'{month}, {date}')}
